@@ -16,7 +16,6 @@ export function ContactList({ filterMass, filterContacts }) {
           </button>
         </li>
       ))}
-
       {!filterMass[0] && <li>Not found!</li>}
     </ul>
   );
