@@ -9,14 +9,23 @@ import { Filter } from './Filter/Filter';
 export class App extends React.Component {
   state = {
     contacts: [],
-    /*contacts: [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      { id: 'id-3', name: 'Eden', number: '645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],*/
     filter: '',
   };
+
+  componentDidMount() {
+    if (
+      localStorage.getItem('contacts') &&
+      JSON.parse(localStorage.getItem('contacts'))[0]
+    ) {
+      this.setState({ contacts: JSON.parse(localStorage.getItem('contacts')) });
+    }
+  }
+
+  componentDidUpdate(_, prevState) {
+    if (prevState.contacts !== this.state.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
 
   filter = () => {
     return this.state.contacts.filter(el =>
