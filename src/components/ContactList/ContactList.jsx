@@ -1,7 +1,8 @@
+import { memo } from 'react';
 import './ContactList.css';
 import PropTypes from 'prop-types';
 
-export function ContactList({ filterMass, filterContacts }) {
+function ContactList({ filterMass, filterContacts }) {
   const onClickFunc = e => {
     filterContacts(e.target.closest('li').dataset.id);
   };
@@ -31,3 +32,5 @@ ContactList.propTypes = {
   ),
   filterContacts: PropTypes.func.isRequired,
 };
+
+export default memo(ContactList);

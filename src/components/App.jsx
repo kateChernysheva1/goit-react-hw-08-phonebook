@@ -1,79 +1,67 @@
-import React from 'react';
-// import { nanoid } from 'nanoid';
+import React, { useState, useEffect } from 'react';
 
-import { Title } from './Title/Title';
-import { ContactForm } from './ContactForm/ContactForm';
-import { ContactList } from './ContactList/ContactList';
-import { Filter } from './Filter/Filter';
+import Title from './Title/Title';
+import ContactForm from './ContactForm/ContactForm';
+import ContactList from './ContactList/ContactList';
+import Filter from './Filter/Filter';
 
-export class App extends React.Component {
-  state = {
-    contacts: [],
-    filter: '',
-  };
-
-  componentDidMount() {
-    if (
-      localStorage.getItem('contacts') &&
+export function App() {
+  const [contacts, setContacts] = useState(() => {
+    return localStorage.getItem('contacts') &&
       JSON.parse(localStorage.getItem('contacts'))[0]
-    ) {
-      this.setState({ contacts: JSON.parse(localStorage.getItem('contacts')) });
-    }
-  }
+      ? JSON.parse(localStorage.getItem('contacts'))
+      : [];
+  });
+  const [filter, setFilter] = useState('');
 
-  componentDidUpdate(_, prevState) {
-    if (prevState.contacts !== this.state.contacts) {
-      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-    }
-  }
+  useEffect(() => {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
 
-  filter = () => {
-    return this.state.contacts.filter(el =>
-      el.name.toLowerCase().includes(this.state.filter.toLowerCase())
+  const filterFunc = () => {
+    return contacts.filter(el =>
+      el.name.toLowerCase().includes(filter.toLowerCase())
     );
   };
 
-  filterState = (name, value) => {
-    this.setState({
-      [name]: value,
-    });
+  const filterState = (name, value) => {
+    switch (name) {
+      case 'filter':
+        setFilter(value);
+        break;
+
+      default:
+        console.warn('Чекни поле');
+        break;
+    }
   };
 
-  saveContacts = obj => {
-    this.setState({
-      contacts: [obj, ...this.state.contacts],
-    });
+  const saveContacts = obj => {
+    setContacts([obj, ...contacts]);
   };
 
-  filterContacts = id => {
-    this.setState(prevState => ({
-      contacts: prevState.contacts.filter(el => el.id !== id),
-    }));
+  const filterContacts = id => {
+    setContacts(prevState => prevState.filter(el => el.id !== id));
   };
 
-  render() {
-    const filterMass = this.filter();
+  const filterMass = filterFunc();
 
-    return (
-      <div className="form">
-        <Title text="Phonebook" />
-        <ContactForm
-          contacts={this.state.contacts}
-          saveContacts={this.saveContacts}
-        />
+  return (
+    <div className="form">
+      <Title text="Phonebook" />
+      <ContactForm contacts={contacts} saveContacts={saveContacts} />
 
-        {this.state.contacts[0] && (
-          <>
-            <Title text="Contacts" />
-            <Filter filter={this.state.filter} filterState={this.filterState} />
+      {contacts[0] && (
+        <>
+          <Title text="Contacts" />
+          <Filter filter={filter} filterState={filterState} />
 
-            <ContactList
-              filterMass={filterMass}
-              filterContacts={this.filterContacts}
-            />
-          </>
-        )}
-      </div>
-    );
-  }
+          <ContactList
+            filterMass={filterMass}
+            filterContacts={filterContacts}
+          />
+        </>
+      )}
+    </div>
+  );
 }

@@ -1,8 +1,9 @@
 import './Filter.css';
 import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
+import { memo } from 'react';
 
-export function Filter({ filter, filterState }) {
+function Filter({ filter, filterState }) {
   const onChange = e => {
     const { name, value } = e.target;
     filterState(name, value);
@@ -31,3 +32,5 @@ Filter.propTypes = {
   filter: PropTypes.string.isRequired,
   filterState: PropTypes.func.isRequired,
 };
+
+export default memo(Filter);
