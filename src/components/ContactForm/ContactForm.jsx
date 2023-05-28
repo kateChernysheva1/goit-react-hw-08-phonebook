@@ -2,16 +2,17 @@ import React, { memo, useState } from 'react';
 import './ContactForm.css';
 import Notiflix from 'notiflix';
 import { nanoid } from 'nanoid';
-import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact } from 'redux/counterSlice';
 
 const fieldIdName = nanoid();
 const fieldIdNumber = nanoid();
 
-function ContactForm({ saveContacts }) {
+function ContactForm() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
   const contacts = useSelector(state => state.contacts);
+  const dispatch = useDispatch();
 
   const checkContactName = () => {
     return contacts.some(el => el.name === name);
@@ -49,7 +50,7 @@ function ContactForm({ saveContacts }) {
       id: nanoid(),
     };
 
-    saveContacts(obj);
+    dispatch(addContact(obj));
 
     setName('');
     setNumber('');
@@ -91,9 +92,5 @@ function ContactForm({ saveContacts }) {
     </>
   );
 }
-
-ContactForm.propTypes = {
-  saveContacts: PropTypes.func.isRequired,
-};
 
 export default memo(ContactForm);

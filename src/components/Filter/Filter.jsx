@@ -1,17 +1,26 @@
 import './Filter.css';
 import { nanoid } from 'nanoid';
-import PropTypes from 'prop-types';
 import { memo } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { changeFilter } from 'redux/counterSlice';
 
 const fieldIdFilter = nanoid();
 
-function Filter({ filterState }) {
+function Filter() {
   const filter = useSelector(state => state.filter);
+  const dispatch = useDispatch();
 
   const onChange = e => {
     const { name, value } = e.target;
-    filterState(name, value);
+    switch (name) {
+      case 'filter':
+        dispatch(changeFilter(value));
+        break;
+
+      default:
+        console.warn('Чекни поле');
+        break;
+    }
   };
 
   return (
@@ -30,9 +39,5 @@ function Filter({ filterState }) {
     </>
   );
 }
-
-Filter.propTypes = {
-  filterState: PropTypes.func.isRequired,
-};
 
 export default memo(Filter);

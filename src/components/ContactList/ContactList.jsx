@@ -1,13 +1,24 @@
 import { memo } from 'react';
 import './ContactList.css';
-import PropTypes from 'prop-types';
+import { filterContact } from 'redux/counterSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
-function ContactList({ filterMass, filterContacts }) {
+function ContactList() {
+  const { contacts, filter } = useSelector(state => state);
+  const dispatch = useDispatch();
+
   const onClickFunc = e => {
-    filterContacts(e.target.closest('li').dataset.id);
+    dispatch(filterContact(e.target.closest('li').dataset.id));
   };
 
-  console.log(filterMass);
+  const filterFunc = () => {
+    return contacts.filter(el =>
+      el.name.toLowerCase().includes(filter.toLowerCase())
+    );
+  };
+
+  const filterMass = filterFunc();
+
   return (
     <ul className="list">
       {filterMass.map(({ name, id, number }) => (
@@ -22,16 +33,5 @@ function ContactList({ filterMass, filterContacts }) {
     </ul>
   );
 }
-
-ContactList.propTypes = {
-  filterMass: PropTypes.arrayOf(
-    PropTypes.exact({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    })
-  ),
-  filterContacts: PropTypes.func.isRequired,
-};
 
 export default memo(ContactList);
