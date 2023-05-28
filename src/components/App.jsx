@@ -1,33 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 
 import Title from './Title/Title';
 import ContactForm from './ContactForm/ContactForm';
 import ContactList from './ContactList/ContactList';
 import Filter from './Filter/Filter';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact, changeFilter, filterContact } from 'redux/counterSlice';
 
 export function App() {
-  const [contacts, setContacts] = useState([]);
-  const [filter, setFilter] = useState('');
-  const firstLoading = useRef(true);
-
-  /*
-  useEffect(() => {
-    if (
-      localStorage.getItem('contacts') &&
-      JSON.parse(localStorage.getItem('contacts'))[0]
-    ) {
-      setContacts(JSON.parse(localStorage.getItem('contacts')));
-    }
-  }, []);*/
-
-  useEffect(() => {
-    if (firstLoading.current) {
-      setContacts(JSON.parse(localStorage.getItem('contacts')));
-      firstLoading.current = false;
-    }
-
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
+  const { contacts, filter } = useSelector(state => state);
+  const dispatch = useDispatch();
 
   const filterFunc = () => {
     return contacts.filter(el =>
@@ -38,7 +20,7 @@ export function App() {
   const filterState = (name, value) => {
     switch (name) {
       case 'filter':
-        setFilter(value);
+        dispatch(changeFilter(value));
         break;
 
       default:
@@ -48,11 +30,11 @@ export function App() {
   };
 
   const saveContacts = obj => {
-    setContacts([obj, ...contacts]);
+    dispatch(addContact(obj));
   };
 
   const filterContacts = id => {
-    setContacts(prevState => prevState.filter(el => el.id !== id));
+    dispatch(filterContact(id));
   };
 
   const filterMass = filterFunc();
@@ -60,12 +42,12 @@ export function App() {
   return (
     <div className="form">
       <Title text="Phonebook" />
-      <ContactForm contacts={contacts} saveContacts={saveContacts} />
+      <ContactForm saveContacts={saveContacts} />
 
       {contacts[0] && (
         <>
           <Title text="Contacts" />
-          <Filter filter={filter} filterState={filterState} />
+          <Filter filterState={filterState} />
 
           <ContactList
             filterMass={filterMass}

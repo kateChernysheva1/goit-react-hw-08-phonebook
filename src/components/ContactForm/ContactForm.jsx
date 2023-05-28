@@ -3,13 +3,15 @@ import './ContactForm.css';
 import Notiflix from 'notiflix';
 import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 
-function ContactForm({ contacts, saveContacts }) {
+const fieldIdName = nanoid();
+const fieldIdNumber = nanoid();
+
+function ContactForm({ saveContacts }) {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
-
-  const fieldIdName = nanoid();
-  const fieldIdNumber = nanoid();
+  const contacts = useSelector(state => state.contacts);
 
   const checkContactName = () => {
     return contacts.some(el => el.name === name);
@@ -91,13 +93,6 @@ function ContactForm({ contacts, saveContacts }) {
 }
 
 ContactForm.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.exact({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    })
-  ),
   saveContacts: PropTypes.func.isRequired,
 };
 

@@ -2,14 +2,17 @@ import './Filter.css';
 import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
 import { memo } from 'react';
+import { useSelector } from 'react-redux';
 
-function Filter({ filter, filterState }) {
+const fieldIdFilter = nanoid();
+
+function Filter({ filterState }) {
+  const filter = useSelector(state => state.filter);
+
   const onChange = e => {
     const { name, value } = e.target;
     filterState(name, value);
   };
-
-  const fieldIdFilter = nanoid();
 
   return (
     <>
@@ -29,7 +32,6 @@ function Filter({ filter, filterState }) {
 }
 
 Filter.propTypes = {
-  filter: PropTypes.string.isRequired,
   filterState: PropTypes.func.isRequired,
 };
 

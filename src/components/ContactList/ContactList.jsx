@@ -7,6 +7,7 @@ function ContactList({ filterMass, filterContacts }) {
     filterContacts(e.target.closest('li').dataset.id);
   };
 
+  console.log(filterMass);
   return (
     <ul className="list">
       {filterMass.map(({ name, id, number }) => (
