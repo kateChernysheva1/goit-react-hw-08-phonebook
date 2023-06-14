@@ -3,7 +3,8 @@ import './ContactForm.css';
 import Notiflix from 'notiflix';
 import { nanoid } from 'nanoid';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from 'redux/counterSlice';
+import { postContact } from 'redux/operations';
+import { selectContacts } from 'redux/selectors';
 
 const fieldIdName = nanoid();
 const fieldIdNumber = nanoid();
@@ -11,7 +12,7 @@ const fieldIdNumber = nanoid();
 function ContactForm() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
-  const contacts = useSelector(state => state.contacts);
+  const { items: contacts } = useSelector(selectContacts);
   const dispatch = useDispatch();
 
   const checkContactName = () => {
@@ -46,11 +47,11 @@ function ContactForm() {
 
     const obj = {
       name,
-      number,
+      phone: number,
       id: nanoid(),
     };
 
-    dispatch(addContact(obj));
+    dispatch(postContact(obj));
 
     setName('');
     setNumber('');
