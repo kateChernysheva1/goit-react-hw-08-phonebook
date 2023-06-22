@@ -28,6 +28,7 @@ export default function Contacts() {
           <ContactList />
         </>
       )}
+
       {isLoading && <div style={{ margin: 20 }}>Loading data...</div>}
       {error && <div style={{ margin: 20 }}>{error}</div>}
     </div>
