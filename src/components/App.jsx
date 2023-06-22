@@ -1,34 +1,48 @@
-import React, { useEffect } from 'react';
-
-import Title from './Title/Title';
-import ContactForm from './ContactForm/ContactForm';
-import ContactList from './ContactList/ContactList';
-import Filter from './Filter/Filter';
+import { Layout } from 'layout/Layout';
+import { PrivateRoute } from 'privateRoute/PrivateRoute';
+import { PublicRoute } from 'publicRoute/PublicRoute';
+import React, { lazy, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getContacts } from 'redux/operations';
-import { selectContacts } from 'redux/selectors';
+import { Route, Routes } from 'react-router-dom';
+import { currentUser } from 'redux/operations';
+import { tokenUser } from 'redux/selectors';
+
+const Contacts = lazy(() => import('../pages/Contacts'));
+const Login = lazy(() => import('../pages/Login'));
+const Register = lazy(() => import('../pages/Register'));
 
 export function App() {
-  const { items: contacts, isLoading, error } = useSelector(selectContacts);
+  const token = useSelector(tokenUser);
+  const { isFirstLoading } = useSelector(state => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getContacts());
-  }, [dispatch]);
+    if (token) {
+      dispatch(currentUser(token));
+    }
+  }, [dispatch, token]);
 
   return (
-    <div className="form">
-      <Title text="Phonebook" />
-      <ContactForm />
-      {!isLoading && contacts[0] && (
-        <>
-          <Title text="Contacts" />
-          <Filter />
-          <ContactList />
-        </>
+    <>
+      {!isFirstLoading && (
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<PublicRoute element={<Contacts />} />} />
+            <Route
+              path="contacts"
+              element={<PublicRoute element={<Contacts />} />}
+            />
+            <Route
+              path="login"
+              element={<PrivateRoute element={<Login />} />}
+            />
+            <Route
+              path="register"
+              element={<PrivateRoute element={<Register />} />}
+            />
+          </Route>
+        </Routes>
       )}
-      {isLoading && <div style={{ margin: 20 }}>Loading data...</div>}
-      {error && <div style={{ margin: 20 }}>{error}</div>}
-    </div>
+    </>
   );
 }

@@ -4,7 +4,7 @@ import Notiflix from 'notiflix';
 import { nanoid } from 'nanoid';
 import { useDispatch, useSelector } from 'react-redux';
 import { postContact } from 'redux/operations';
-import { selectContacts } from 'redux/selectors';
+import { selectContacts, tokenUser } from 'redux/selectors';
 
 const fieldIdName = nanoid();
 const fieldIdNumber = nanoid();
@@ -14,6 +14,7 @@ function ContactForm() {
   const [number, setNumber] = useState('');
   const { items: contacts } = useSelector(selectContacts);
   const dispatch = useDispatch();
+  const token = useSelector(tokenUser);
 
   const checkContactName = () => {
     return contacts.some(el => el.name === name);
@@ -47,8 +48,8 @@ function ContactForm() {
 
     const obj = {
       name,
-      phone: number,
-      id: nanoid(),
+      number,
+      token,
     };
 
     dispatch(postContact(obj));
